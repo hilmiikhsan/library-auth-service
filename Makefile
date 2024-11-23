@@ -36,3 +36,15 @@ goose-status:
 	@echo " >> Installing goose if not installed"
 	@go install github.com/pressly/goose/v3/cmd/goose@latest
 	@goose -dir scripts/migrations/sql postgres "host=localhost user=postgres password=password dbname=library_auth sslmode=disable" status
+
+PROTO_SRC_DIR := ./cmd/proto/tokenvalidation
+PROTO_OUT_DIR := ./cmd/proto/tokenvalidation
+PROTO_FILE := token_validation.proto
+
+generate-proto:
+	protoc --proto_path=$(PROTO_SRC_DIR) \
+		--go_out=$(PROTO_OUT_DIR) --go-grpc_out=$(PROTO_OUT_DIR) \
+		--go_opt=paths=source_relative \
+		--go-grpc_opt=paths=source_relative \
+		$(PROTO_SRC_DIR)/$(PROTO_FILE)
+

@@ -1,6 +1,7 @@
 package constants
 
 var (
+	SuccessMessage                   = "success"
 	ErrUsernameAlreadyRegistered     = "username already registered"
 	ErrUsernameOrPasswordIsIncorrect = "username or password is incorrect"
 	ErrAuthorizationIsEmpty          = "authorization is empty"

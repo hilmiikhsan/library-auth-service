@@ -3,12 +3,17 @@ package cmd
 import (
 	"net"
 
+	"github.com/hilmiikhsan/library-auth-service/cmd/proto/tokenvalidation"
 	"github.com/hilmiikhsan/library-auth-service/helpers"
 	"google.golang.org/grpc"
 )
 
 func ServeGRPC() {
+	dependency := dependencyInject()
+
 	server := grpc.NewServer()
+
+	tokenvalidation.RegisterTokenValidationServer(server, dependency.TokenValidationAPI)
 
 	lis, err := net.Listen("tcp", ":"+helpers.GetEnv("GRPC_PORT", "6000"))
 	if err != nil {

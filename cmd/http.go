@@ -5,11 +5,13 @@ import (
 	"github.com/hilmiikhsan/library-auth-service/helpers"
 	authAPI "github.com/hilmiikhsan/library-auth-service/internal/api/auth"
 	healthCheckAPI "github.com/hilmiikhsan/library-auth-service/internal/api/health_check"
+	api "github.com/hilmiikhsan/library-auth-service/internal/api/token_validation"
 	"github.com/hilmiikhsan/library-auth-service/internal/interfaces"
 	userRepository "github.com/hilmiikhsan/library-auth-service/internal/repository/user"
 	userSessionRepository "github.com/hilmiikhsan/library-auth-service/internal/repository/user_session"
 	authServices "github.com/hilmiikhsan/library-auth-service/internal/services/auth"
 	healthCheckServices "github.com/hilmiikhsan/library-auth-service/internal/services/health_check"
+	tokenValidationServices "github.com/hilmiikhsan/library-auth-service/internal/services/token_validation"
 	"github.com/hilmiikhsan/library-auth-service/internal/validator"
 	"github.com/sirupsen/logrus"
 )
@@ -40,8 +42,9 @@ type Dependency struct {
 	UserRepository        interfaces.IUserRepository
 	UserSessionRepository interfaces.IUserSessionRepository
 
-	HealthcheckAPI interfaces.IHealthcheckHandler
-	AuthAPI        interfaces.IAuthHandler
+	HealthcheckAPI     interfaces.IHealthcheckHandler
+	AuthAPI            interfaces.IAuthHandler
+	TokenValidationAPI *api.TokenValidationHandler
 }
 
 func dependencyInject() Dependency {
@@ -74,11 +77,20 @@ func dependencyInject() Dependency {
 		Validator:   validator,
 	}
 
+	tokenValidationSvc := &tokenValidationServices.TokenValidationService{
+		UserSessionRepo: userSessionRepo,
+		Logger:          helpers.Logger,
+	}
+	tokenValidationAPI := &api.TokenValidationHandler{
+		TokenValidationService: tokenValidationSvc,
+	}
+
 	return Dependency{
 		Logger:                helpers.Logger,
 		UserRepository:        userRepo,
 		UserSessionRepository: userSessionRepo,
 		HealthcheckAPI:        healthcheckAPI,
 		AuthAPI:               authAPI,
+		TokenValidationAPI:    tokenValidationAPI,
 	}
 }
