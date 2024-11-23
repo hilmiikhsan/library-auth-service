@@ -12,9 +12,6 @@ func main() {
 	// load log
 	helpers.SetupLogger()
 
-	// load log file
-	helpers.SetupLogfile()
-
 	// load db
 	helpers.SetupPostgres()
 
