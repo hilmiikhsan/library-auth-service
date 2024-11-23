@@ -39,4 +39,11 @@ const (
 	queryDeleteUserSession = `
 		DELETE FROM user_sessions WHERE token = ?
 	`
+
+	queryUpdateTokenByRefreshToken = `
+		UPDATE user_sessions
+		SET
+			token = ?
+		WHERE refresh_token = ?
+	`
 )

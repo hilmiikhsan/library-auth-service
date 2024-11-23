@@ -104,3 +104,25 @@ func (s *AuthService) Logout(ctx context.Context, token string) error {
 
 	return nil
 }
+
+func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string, tokenClaim helpers.ClaimToken) (dto.RefreshTokenResponse, error) {
+	var (
+		res dto.RefreshTokenResponse
+	)
+
+	token, err := helpers.GenerateToken(ctx, tokenClaim.UserID, tokenClaim.Username, constants.TokenTypeAccess, time.Now())
+	if err != nil {
+		s.Logger.Error("service::RefreshToken - Failed to generate token : ", err)
+		return res, errors.New(constants.ErrFailedGenerateToken)
+	}
+
+	err = s.UserSessionRepo.UpdateTokenByRefreshToken(ctx, token, refreshToken)
+	if err != nil {
+		s.Logger.Error("service::RefreshToken - Failed to update token by refresh token : ", err)
+		return res, errors.Wrap(err, "failed to update token by refresh token")
+	}
+
+	res.Token = token
+
+	return res, nil
+}

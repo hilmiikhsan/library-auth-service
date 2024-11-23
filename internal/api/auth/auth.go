@@ -49,7 +49,7 @@ func (api *AuthHandler) Register(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, helpers.Success(res, ""))
+	ctx.JSON(http.StatusCreated, helpers.Success(res, ""))
 }
 
 func (api *AuthHandler) Login(ctx *gin.Context) {
@@ -105,4 +105,38 @@ func (api *AuthHandler) Logout(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, helpers.Success(nil, ""))
+}
+
+func (api *AuthHandler) RefreshToken(ctx *gin.Context) {
+	authHeader := ctx.GetHeader(constants.HeaderAuthorization)
+	if authHeader == "" {
+		helpers.Logger.Error("handler::Logout - Authorization header is empty")
+		ctx.JSON(http.StatusUnauthorized, helpers.Error(constants.ErrTokenIsEmpty))
+		return
+	}
+
+	refreshToken := helpers.ExtractBearerToken(authHeader)
+
+	claims, ok := ctx.Get(constants.TokenTypeAccess)
+	if !ok {
+		helpers.Logger.Error("handler::RefreshToken - Failed to get claims from context")
+		ctx.JSON(http.StatusInternalServerError, helpers.Error("Failed to get claims from context"))
+		return
+	}
+
+	tokenClaims, ok := claims.(*helpers.ClaimToken)
+	if !ok {
+		helpers.Logger.Error("handler::RefreshToken - Failed to cast claims to token")
+		ctx.JSON(http.StatusInternalServerError, helpers.Error("Failed to cast claims to token"))
+		return
+	}
+
+	res, err := api.AuthService.RefreshToken(ctx.Request.Context(), refreshToken, *tokenClaims)
+	if err != nil {
+		helpers.Logger.Error("handler::RefreshToken - Failed to refresh token : ", err)
+		ctx.JSON(http.StatusInternalServerError, helpers.Error(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, helpers.Success(res, ""))
 }

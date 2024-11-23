@@ -75,3 +75,13 @@ func (r *UserSessionRepository) DeleteUserSession(ctx context.Context, token str
 
 	return nil
 }
+
+func (r *UserSessionRepository) UpdateTokenByRefreshToken(ctx context.Context, token string, refreshToken string) error {
+	_, err := r.DB.ExecContext(ctx, r.DB.Rebind(queryUpdateTokenByRefreshToken), token, refreshToken)
+	if err != nil {
+		r.Logger.Error("repo::UpdateTokenByRefreshToken - Failed to update token by refresh token : ", err)
+		return err
+	}
+
+	return nil
+}

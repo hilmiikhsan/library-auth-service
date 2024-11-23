@@ -27,6 +27,7 @@ func ServeHTTP() {
 
 	userV1WithAuth := userV1.Use()
 	userV1WithAuth.DELETE("/logout", dependency.MiddlewareValidateAuth, dependency.AuthAPI.Logout)
+	userV1WithAuth.PUT("/refresh-token", dependency.MiddlewareRefreshToken, dependency.AuthAPI.RefreshToken)
 
 	err := router.Run(":" + helpers.GetEnv("PORT", ""))
 	if err != nil {
