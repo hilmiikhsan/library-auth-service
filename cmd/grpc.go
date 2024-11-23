@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"log"
 	"net"
 
 	"github.com/hilmiikhsan/library-auth-service/helpers"

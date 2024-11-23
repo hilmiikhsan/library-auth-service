@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"log"
-
 	"github.com/gin-gonic/gin"
 	"github.com/hilmiikhsan/library-auth-service/helpers"
 	authAPI "github.com/hilmiikhsan/library-auth-service/internal/api/auth"
@@ -15,6 +13,8 @@ import (
 	"github.com/hilmiikhsan/library-auth-service/internal/validator"
 	"github.com/sirupsen/logrus"
 )
+
+var log = helpers.Logger
 
 func ServeHTTP() {
 	dependency := dependencyInject()

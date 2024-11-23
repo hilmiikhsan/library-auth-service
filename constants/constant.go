@@ -6,6 +6,7 @@ var (
 	ErrAuthorizationIsEmpty          = "authorization is empty"
 	ErrFailedGenerateToken           = "failed to generate token"
 	ErrFailedGenerateRefreshToken    = "failed to generate refresh token"
+	ErrTokenExpired                  = "token is already expired"
 )
 
 const (
