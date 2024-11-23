@@ -8,8 +8,9 @@ const (
 			token,
 			refresh_token,
 			token_expired,
-			refresh_token_expired,
-		FROM user_sessions WHERE token = ?
+			refresh_token_expired
+		FROM user_sessions 
+		WHERE token = ?
 	`
 
 	queryInsertNewUserSession = `
@@ -21,5 +22,21 @@ const (
 			token_expired,
 			refresh_token_expired
 		) VALUES (?, ?, ?, ?, ?)
+	`
+
+	queryFindUserSessionByRefreshToken = `
+		SELECT
+			id,
+			user_id,
+			token,
+			refresh_token,
+			token_expired,
+			refresh_token_expired
+		FROM user_sessions 
+		WHERE refresh_token = ?
+	`
+
+	queryDeleteUserSession = `
+		DELETE FROM user_sessions WHERE token = ?
 	`
 )

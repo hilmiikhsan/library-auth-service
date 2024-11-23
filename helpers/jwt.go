@@ -21,7 +21,7 @@ var MapTypeToken = map[string]time.Duration{
 
 var jwtSecret = []byte(GetEnv("APP_SECRET", ""))
 
-func GenerateToken(ctx context.Context, userID string, username string, tokenType string, now time.Time) (string, error) {
+func GenerateToken(ctx context.Context, userID, username, tokenType string, now time.Time) (string, error) {
 	claimToken := ClaimToken{
 		UserID:   userID,
 		Username: username,

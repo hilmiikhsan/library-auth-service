@@ -16,7 +16,7 @@ type Healthcheck struct {
 func (api *Healthcheck) HealthcheckHandlerHTTP(c *gin.Context) {
 	msg, err := api.HealthcheckServices.HealthcheckServices()
 	if err != nil {
-		log.Error("failed to get healthcheck services: ", err)
+		log.Error("healthcheck::HealthcheckHandlerHTTP - failed to get healthcheck services: ", err)
 		c.JSON(http.StatusInternalServerError, nil)
 		return
 	}

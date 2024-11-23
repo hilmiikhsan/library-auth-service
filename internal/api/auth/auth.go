@@ -17,72 +17,92 @@ type AuthHandler struct {
 	Validator   *validator.Validator
 }
 
-func (api *AuthHandler) Register(c *gin.Context) {
+func (api *AuthHandler) Register(ctx *gin.Context) {
 	var (
 		req = new(dto.RegisterRequest)
 	)
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		helpers.Logger.Error("handler::Register - Failed to bind request : ", err)
-		c.JSON(http.StatusBadRequest, helpers.Error(constants.ErrFailedBadRequest))
+		ctx.JSON(http.StatusBadRequest, helpers.Error(constants.ErrFailedBadRequest))
 		return
 	}
 
 	if err := api.Validator.Validate(req); err != nil {
 		helpers.Logger.Error("handler::Register - Failed to validate request : ", err)
 		code, errs := helpers.Errors(err, req)
-		c.JSON(code, helpers.Error(errs))
+		ctx.JSON(code, helpers.Error(errs))
 		return
 	}
 
-	res, err := api.AuthService.Register(c, req)
+	res, err := api.AuthService.Register(ctx.Request.Context(), req)
 	if err != nil {
 		if strings.Contains(err.Error(), constants.ErrUsernameAlreadyRegistered) {
 			helpers.Logger.Error("handler::Register - Username already registered : ", err)
-			c.JSON(http.StatusConflict, helpers.Error(constants.ErrUsernameAlreadyRegistered))
+			ctx.JSON(http.StatusConflict, helpers.Error(constants.ErrUsernameAlreadyRegistered))
 			return
 		}
 
 		helpers.Logger.Error("handler::Register - Failed to register user : ", err)
 		code, errs := helpers.Errors[error](err)
-		c.JSON(code, helpers.Error(errs))
+		ctx.JSON(code, helpers.Error(errs))
 		return
 	}
 
-	c.JSON(http.StatusOK, helpers.Success(res, ""))
+	ctx.JSON(http.StatusOK, helpers.Success(res, ""))
 }
 
-func (api *AuthHandler) Login(c *gin.Context) {
+func (api *AuthHandler) Login(ctx *gin.Context) {
 	var (
 		req = new(dto.LoginRequest)
 	)
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		helpers.Logger.Error("handler::Login - Failed to bind request : ", err)
-		c.JSON(http.StatusBadRequest, helpers.Error(constants.ErrFailedBadRequest))
+		ctx.JSON(http.StatusBadRequest, helpers.Error(constants.ErrFailedBadRequest))
 		return
 	}
 
 	if err := api.Validator.Validate(req); err != nil {
 		helpers.Logger.Error("handler::Login - Failed to validate request : ", err)
 		code, errs := helpers.Errors(err, req)
-		c.JSON(code, helpers.Error(errs))
+		ctx.JSON(code, helpers.Error(errs))
 		return
 	}
 
-	res, err := api.AuthService.Login(c, req)
+	res, err := api.AuthService.Login(ctx.Request.Context(), req)
 	if err != nil {
 		if strings.Contains(err.Error(), constants.ErrUsernameOrPasswordIsIncorrect) {
 			helpers.Logger.Error("handler::Login - Username or password is incorrect : ", err)
-			c.JSON(http.StatusUnauthorized, helpers.Error(constants.ErrUsernameOrPasswordIsIncorrect))
+			ctx.JSON(http.StatusUnauthorized, helpers.Error(constants.ErrUsernameOrPasswordIsIncorrect))
 			return
 		}
 
 		helpers.Logger.Error("handler::Login - Failed to login user : ", err)
 		code, errs := helpers.Errors(err, req)
-		c.JSON(code, helpers.Error(errs))
+		ctx.JSON(code, helpers.Error(errs))
 		return
 	}
 
-	c.JSON(http.StatusOK, helpers.Success(res, ""))
+	ctx.JSON(http.StatusOK, helpers.Success(res, ""))
+}
+
+func (api *AuthHandler) Logout(ctx *gin.Context) {
+	authHeader := ctx.GetHeader(constants.HeaderAuthorization)
+	if authHeader == "" {
+		helpers.Logger.Error("handler::Logout - Authorization header is empty")
+		ctx.JSON(http.StatusUnauthorized, helpers.Error(constants.ErrTokenIsEmpty))
+		return
+	}
+
+	token := helpers.ExtractBearerToken(authHeader)
+
+	err := api.AuthService.Logout(ctx.Request.Context(), token)
+	if err != nil {
+		helpers.Logger.Error("handler::Logout - Failed to logout user : ", err)
+		ctx.JSON(http.StatusInternalServerError, helpers.Error(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, helpers.Success(nil, ""))
 }

@@ -7,6 +7,9 @@ var (
 	ErrFailedGenerateToken           = "failed to generate token"
 	ErrFailedGenerateRefreshToken    = "failed to generate refresh token"
 	ErrTokenExpired                  = "token is already expired"
+	ErrInvalidAuthorizationFormat    = "invalid authorization format"
+	ErrFindUserSessionByToken        = "token is already expired"
+	ErrTokenIsEmpty                  = "token is empty"
 )
 
 const (
@@ -14,6 +17,7 @@ const (
 )
 
 const (
-	TokenTypeAccess    = "token"
-	RefreshTokenAccess = "refresh_token"
+	TokenTypeAccess     = "token"
+	RefreshTokenAccess  = "refresh_token"
+	HeaderAuthorization = "Authorization"
 )

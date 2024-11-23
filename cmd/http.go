@@ -14,8 +14,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var log = helpers.Logger
-
 func ServeHTTP() {
 	dependency := dependencyInject()
 
@@ -27,9 +25,12 @@ func ServeHTTP() {
 	userV1.POST("/register", dependency.AuthAPI.Register)
 	userV1.POST("/login", dependency.AuthAPI.Login)
 
+	userV1WithAuth := userV1.Use()
+	userV1WithAuth.DELETE("/logout", dependency.MiddlewareValidateAuth, dependency.AuthAPI.Logout)
+
 	err := router.Run(":" + helpers.GetEnv("PORT", ""))
 	if err != nil {
-		log.Fatal("failed to run http server: ", err)
+		helpers.Logger.Fatal("failed to run http server: ", err)
 	}
 }
 

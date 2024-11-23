@@ -1,8 +1,6 @@
 package helpers
 
 import (
-	"fmt"
-
 	"github.com/go-playground/validator/v10"
 	"github.com/lib/pq"
 )
@@ -16,11 +14,8 @@ func Errors[T any](err error, payloads ...*T) (code int, errors any) {
 		payload = payloads[0]
 	}
 
-	fmt.Println("payload :", payload)
-
 	// REQUEST VALIDATION ERRORS
 	if payload != nil {
-		fmt.Println("MASUK PAYLOAD")
 		if errValidator, ok := err.(validator.ValidationErrors); ok {
 			code, errors = errorValidationHandler(errValidator, payload)
 		}

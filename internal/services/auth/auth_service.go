@@ -94,3 +94,13 @@ func (s *AuthService) Login(ctx context.Context, req *dto.LoginRequest) (dto.Log
 
 	return res, nil
 }
+
+func (s *AuthService) Logout(ctx context.Context, token string) error {
+	err := s.UserSessionRepo.DeleteUserSession(ctx, token)
+	if err != nil {
+		s.Logger.Error("service::Logout - Failed to delete user session : ", err)
+		return errors.Wrap(err, "failed to delete user session")
+	}
+
+	return nil
+}
