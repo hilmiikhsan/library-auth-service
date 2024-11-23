@@ -8,8 +8,10 @@ import (
 )
 
 type IAuthService interface {
-	Register(ctx context.Context, request *dto.RegisterRequest) (dto.RegisterResponse, error)
+	Register(ctx context.Context, req *dto.RegisterRequest) (dto.RegisterResponse, error)
+	Login(ctx context.Context, req *dto.LoginRequest) (dto.LoginResponse, error)
 }
 type IAuthHandler interface {
 	Register(*gin.Context)
+	Login(*gin.Context)
 }

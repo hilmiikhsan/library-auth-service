@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -22,8 +21,8 @@ func SetupPostgres() {
 
 	DB, err = sqlx.Connect("postgres", dsn)
 	if err != nil {
-		log.Fatal("failed to connect to database: ", err)
+		Logger.Fatal("failed to connect to database: ", err)
 	}
 
-	log.Println("Successfully connected to PostgreSQL database...")
+	Logger.Info("Successfully connected to PostgreSQL database...")
 }

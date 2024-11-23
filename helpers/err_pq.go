@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/lib/pq"
-	log "github.com/sirupsen/logrus"
 )
 
 func errorPqHandler(errPq *pq.Error) (int, map[string][]string) {
@@ -17,8 +16,8 @@ func errorPqHandler(errPq *pq.Error) (int, map[string][]string) {
 		columnMsg string
 	)
 
-	log.Debug("pq error code name: ", errPq.Code.Name())
-	log.Debug("pq error detail: ", errPq.Detail)
+	Logger.Debug("pq error code name: ", errPq.Code.Name())
+	Logger.Debug("pq error detail: ", errPq.Detail)
 
 	if errPq.Code.Name() == "foreign_key_violation" {
 		regex := regexp.MustCompile(`Key \(([^)]+)\)`)

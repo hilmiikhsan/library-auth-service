@@ -1,8 +1,6 @@
 package helpers
 
 import (
-	"log"
-
 	"github.com/joho/godotenv"
 )
 
@@ -12,7 +10,7 @@ func SetupConfig() {
 	var err error
 	Env, err = godotenv.Read(".env")
 	if err != nil {
-		log.Fatal("failed to read env file: ", err)
+		Logger.Fatal("failed to read env file: ", err)
 	}
 }
 

@@ -3,8 +3,8 @@
 CREATE TABLE IF NOT EXISTS user_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
-    token VARCHAR(255),
-    refresh_token VARCHAR(255),
+    token TEXT,
+    refresh_token TEXT,
     token_expired TIMESTAMP NOT NULL,
     refresh_token_expired TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
