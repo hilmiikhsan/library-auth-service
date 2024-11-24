@@ -41,6 +41,8 @@ func (s *TokenValidationHandler) ValidateToken(ctx context.Context, req *tokenva
 		Data: &tokenvalidation.UserData{
 			UserId:   claimsToken.UserID,
 			Username: claimsToken.Username,
+			FullName: claimsToken.FullName,
+			Role:     claimsToken.Role,
 		},
 	}, nil
 }
