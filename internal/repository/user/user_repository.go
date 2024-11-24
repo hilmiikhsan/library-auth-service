@@ -23,9 +23,12 @@ func (r *UserRepository) InsertNewUser(ctx context.Context, user *models.User) (
 	err := r.DB.QueryRowContext(ctx, r.DB.Rebind(queryInsertNewUser),
 		user.Username,
 		user.Password,
+		user.FullName,
 	).Scan(
 		&res.ID,
 		&res.Username,
+		&res.FullName,
+		&res.Role,
 	)
 	if err != nil {
 		pqErr, ok := err.(*pq.Error)

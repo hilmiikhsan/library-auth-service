@@ -24,5 +24,10 @@ func SetupPostgres() {
 		Logger.Fatal("failed to connect to database: ", err)
 	}
 
+	err = SeedAdminAccount(DB)
+	if err != nil {
+		Logger.Fatalf("Error seeding admin account: %v\n", err)
+	}
+
 	Logger.Info("Successfully connected to PostgreSQL database...")
 }

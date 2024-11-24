@@ -32,6 +32,7 @@ func (s *AuthService) Register(ctx context.Context, req *dto.RegisterRequest) (d
 	user, err := s.UserRepo.InsertNewUser(ctx, &models.User{
 		Username: req.Username,
 		Password: req.Password,
+		FullName: req.FullName,
 	})
 	if err != nil {
 		s.Logger.Error("service::Register - Failed to insert new user : ", err)
@@ -40,6 +41,8 @@ func (s *AuthService) Register(ctx context.Context, req *dto.RegisterRequest) (d
 
 	res.ID = user.ID.String()
 	res.Username = user.Username
+	res.FullName = user.FullName
+	res.Role = user.Role
 
 	return res, nil
 }
@@ -61,13 +64,13 @@ func (s *AuthService) Login(ctx context.Context, req *dto.LoginRequest) (dto.Log
 		return res, errors.New(constants.ErrUsernameOrPasswordIsIncorrect)
 	}
 
-	token, err := helpers.GenerateToken(ctx, userData.ID.String(), userData.Username, constants.TokenTypeAccess, now)
+	token, err := helpers.GenerateToken(ctx, userData.ID.String(), userData.Username, userData.FullName, userData.Role, constants.TokenTypeAccess, now)
 	if err != nil {
 		s.Logger.Error("service::Login - Failed to generate token : ", err)
 		return res, errors.New(constants.ErrFailedGenerateToken)
 	}
 
-	refreshToken, err := helpers.GenerateToken(ctx, userData.ID.String(), userData.Username, constants.RefreshTokenAccess, now)
+	refreshToken, err := helpers.GenerateToken(ctx, userData.ID.String(), userData.Username, userData.FullName, userData.Role, constants.RefreshTokenAccess, now)
 	if err != nil {
 		s.Logger.Error("service::Login - Failed to generate refresh token : ", err)
 		return res, errors.New(constants.ErrFailedGenerateRefreshToken)
@@ -89,6 +92,8 @@ func (s *AuthService) Login(ctx context.Context, req *dto.LoginRequest) (dto.Log
 
 	res.UserID = userData.ID.String()
 	res.Username = userData.Username
+	res.FullName = userData.FullName
+	res.Role = userData.Role
 	res.Token = token
 	res.RefreshToken = refreshToken
 
@@ -110,7 +115,7 @@ func (s *AuthService) RefreshToken(ctx context.Context, refreshToken string, tok
 		res dto.RefreshTokenResponse
 	)
 
-	token, err := helpers.GenerateToken(ctx, tokenClaim.UserID, tokenClaim.Username, constants.TokenTypeAccess, time.Now())
+	token, err := helpers.GenerateToken(ctx, tokenClaim.UserID, tokenClaim.Username, tokenClaim.FullName, tokenClaim.Role, constants.TokenTypeAccess, time.Now())
 	if err != nil {
 		s.Logger.Error("service::RefreshToken - Failed to generate token : ", err)
 		return res, errors.New(constants.ErrFailedGenerateToken)
