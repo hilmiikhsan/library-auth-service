@@ -1,0 +1,35 @@
+version: "3"
+services:
+  db:
+    image: postgres:latest
+    container_name: local-postgres-library-auth
+    ports:
+      - "5435:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: library_auth
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: local-redis-library-auth
+    ports:
+      - "6399:6379"
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - ./redis_data:/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: library-auth-service
+    ports:
+      - "9090:9090"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
