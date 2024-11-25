@@ -37,31 +37,29 @@ A scalable and efficient authentication and authorization service for the Librar
 
 ### Setup Instructions
 
-1. **Clone the repository**:
+#### Using Docker
+
+1. **Pull the Docker Image**:  
+    Download the prebuilt Docker image from Docker Hub:  
     ```bash
-    git clone https://github.com/your-repo/library-auth-management.git
-    cd library-auth-management
+    docker pull ikhsanhilmi/library-auth-service-app
     ```
 
-2. **Setup Environment Variables**:
-    Copy the example environment file and adjust credentials:
+2. **Run the Container**:  
+    Start the container with the following command:  
     ```bash
-    cp .env.example .env
+    docker run -d \
+      --name library-auth-service \
+      -p 9090:9090 \
+      -e POSTGRES_URL=postgresql://<user>:<password>@<host>:<port>/<dbname> \
+      -e REDIS_URL=redis://<host>:<port> \
+      -e JWT_SECRET=<your_jwt_secret> \
+      ikhsanhilmi/library-auth-service-app
     ```
-    Modify `.env` with the appropriate database and Redis credentials.
+    Replace `<user>`, `<password>`, `<host>`, `<port>`, `<dbname>`, and `<your_jwt_secret>` with the appropriate credentials and secrets.
 
-3. **Run the Service**:
-    Use the following command to start the service:
-    ```bash
-    make run
-    ```
-    The service will run on `http://localhost:9090` by default.
-
----
-
-### API Documentation
-
-API documentation is available at `http://localhost:9090/docs` once the service is running. It includes detailed information about the available endpoints, request/response formats, and error codes.
+3. **Verify the Service**:  
+    Access the service at `http://localhost:9090`.
 
 ---
 
