@@ -48,8 +48,8 @@ jobs:
       - name: Run New Docker Container
         run: |
           docker run -d \
-          -p 8080:8080 \
-          -p 4000:4000 \
+          -p 9090:9090 \
+          -p 6000:6000 \
           -e DB_HOST="${{ secrets.DB_HOST }}" \
           -e DB_PORT="${{ secrets.DB_PORT }}" \
           -e DB_NAME="${{ secrets.DB_NAME }}" \
