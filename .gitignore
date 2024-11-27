@@ -92,3 +92,5 @@ vendor
 .idea
 
 active.en.json
+
+.env
